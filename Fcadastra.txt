@@ -1,0 +1,34 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace std;
+
+void Fcadastra()
+{
+
+    char NOME[40], TEL[15];
+    cin.ignore();
+
+    // NOME DA PESSOA CADASTRO
+
+    fstream ARQTXT("AGENDA.TXT", ios_base :: app);
+    cout << "\n  Digite o NOME do contato::>> ";
+
+    cin.getline(NOME, sizeof(NOME) );
+    while(strlen(NOME)< 40)
+    {
+        strcat(NOME, ".");
+    }
+
+
+
+    // TELEFONE CADASTRO
+    cout << "Digite o telefone :>>  ";
+    cin.getline(TEL, sizeof(TEL));
+    while (strlen(TEL) < 15)
+    {
+        strcat(TEL, ".");
+    }
+    ARQTXT << NOME << "\t"  << TEL << endl;
+    ARQTXT.close();
