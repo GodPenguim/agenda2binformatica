@@ -90,7 +90,7 @@ void fEdita()
             cin.getline(Agenda[Ind].telefone, 15);
             cout <<"CONTATO EDITADO!";
         } else
-        cout << "CÓDIGO DE INVOCADOR NÃO ENCONTRADO!\n"<<endl;
+        cout << "CÃ“DIGO DE INVOCADOR NÃƒO ENCONTRADO!\n"<<endl;
 }
 void fLista()
 {
@@ -112,7 +112,7 @@ void fApaga()
 {
     cin.ignore();
     char Nome[40];
-    cout<<"NOME DO CONTATO A SER EXCLUÍDO:\t";
+    cout<<"NOME DO CONTATO A SER EXCLUÃDO:\t";
     cin.getline(Nome, 40);
 
     int Indice = fPesquisa(Nome);
@@ -147,7 +147,7 @@ int main()
     leitura.open("Agenda.txt");
     if(!leitura.is_open( ))
     {
-        cout<<"Não foi possível abrir arquivo! agenda vazia\n";
+        cout<<"NÃ£o foi possÃ­vel abrir arquivo! agenda vazia\n";
         leitura.clear( );
     } else
     {
@@ -167,7 +167,7 @@ int main()
         }
     }
 
-        while (Op != 6)
+        while (Op != 7)
         {
 
             cout << "================AGENDA==================\n"<<endl;
