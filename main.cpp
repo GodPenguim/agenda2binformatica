@@ -1,15 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <conio.h>
+
 using namespace std;
 
-struct Tagenda
-{
-    int codigo;
-    char nome[40];
-    char telefone[15];
-} Agenda[20];
+int     Codigo, I;
+char    Nome[40], NomeComp[40];
+char    Telefone[15];
+char    Buff[58];
+
+
 void fLimpa()
 {
     int I;
@@ -18,116 +18,182 @@ void fLimpa()
         cout << "\n";
     }
 }
-int fPosicao(void)
-{
-    int I;
-    for(I=0; I < 20; I++)
-    {
-        if (Agenda[I].codigo == 0)
-                    return I;
 
-    }
-    return I;
-}
-void fCadastra()//murilo
+void fCadastra()
 {
-    int Posicao = fPosicao();
-    cin.ignore();
+    int J, Encontrou ;
+    fstream AGENDATXT ("Agenda.txt", ios_base::app);
 
-    if (Posicao < 20)
+
+    do
     {
+         Encontrou = 0;
+        //le o nome, coloa em maiusculo e preenche com pontos
         fLimpa();
-        cout<<"==================CADASTRO======================\n";
-        Agenda[Posicao].codigo = Posicao+1;
-        cout << "\nNOME:\t";
-        cin.getline(Agenda[Posicao].nome, sizeof(Agenda[Posicao].nome));
-        while (strlen(Agenda[Posicao].nome)< 40)
+        cout<<"=======================CADASTRO=============================\n";
+        cin.ignore();
+        cout<< "NOME:\t";
+        cin.getline(Nome, 40);
+        strupr(Nome);
+        while (strlen(Nome)< 40)
         {
-            strcat(Agenda[Posicao].nome, ".");
+            strcat(Nome, ".");
         }
 
-        cout << "\nTELEFONE:\t";
-        cin.getline(Agenda[Posicao].telefone, sizeof(Agenda[Posicao].telefone));
-        while(strlen(Agenda[Posicao].telefone) < 15)
+        fstream Pesquisa;
+        Pesquisa.open("Agenda.txt");
+        J=1;
+        while(!Pesquisa.eof() && Encontrou == 0)
         {
-            strcat (Agenda[Posicao].telefone, " ");
+            Pesquisa.getline(Buff, 58);
+            for(I=0; I<40; I++)
+            {
+                NomeComp[I] = Buff[I];
+            }
+
+            if (!strcmp(NomeComp, Nome))
+            {
+                Encontrou = 1;
+                cout<<"NOME J� CADASTRADO! TENTE NOVAMENTE\nPRECIONE ENTER PARA CONTINUAR\n";
+                cin.ignore();
+
+            }
+            J++;
+
         }
 
-    } else
+        Pesquisa.close();
+    } while (Encontrou == 1);
+
+
+    cout<<"TELEFONE:\t";
+    cin.getline(Telefone, 15);
+    while (strlen(Telefone)< 15)
     {
-        cout<<"agenda cheia\n";
+        strcat(Telefone, ".");
     }
+    AGENDATXT <<J-1<<"\t"<< Nome << "\t" << Telefone<< "\n";
+    AGENDATXT.close();
+    cout<<"CADASTRADO COM SUCESSO!!\nTECLE ENTER PARA CONTINUAR\n";
+    cin.get();
 
 }
-int fPesquisa( char Nome[40])
+void fPesquisa()
 {
-    int I;
-    for(I=0;Agenda[I].codigo !=0; I++)
+    int Encontrou = 0;
+    fLimpa();
+    cout<<"digite o nome a ser pesquisado:\n";
+    cin.ignore();
+    cin.getline(Nome, 40);
+    strupr(Nome);
+    while (strlen(Nome)< 40)
     {
-        if(strcmp(Nome, Agenda[I].nome))
+        strcat(Nome, ".");
+    }
+    fstream Pesquisa;
+    Pesquisa.open("Agenda.txt");
+    while(!Pesquisa.eof() && Encontrou == 0)
+    {
+        Pesquisa.getline(Buff, 58);
+        for(I=0; I<40; I++)
         {
-            return I;
+            NomeComp[I] = Buff[I];
+        }
+
+        if (!strcmp(NomeComp, Nome))
+        {
+            Encontrou = 1;
         }
 
     }
+    if(Encontrou)
+        cout<<"NOME EXISTENTE\n"; else cout << "NOME NAO ENCONTRADO\n";
+        cout<< "PRECIONE ENTER PARA COTINUAR\n";
+        cin.get();
+        Pesquisa.close();
 
-    return -1;
 }
 void fEdita()
 {
-    char NomeEdita[40];
-    cout<<"NOME DO CONTAO:\t";
-    cin.getline(NomeEdita, 40);
-    int Ind = fPesquisa(NomeEdita);
-    if(Ind != -1)
+    int Encontrou = 0, J;
+    fLimpa();
+    cout<<"========================EDI�AO=======================\n";
+    cout<<"DIGITE O NOME DO CONTATO A SER EDITADO:\n";
+    cin.ignore();
+    cin.getline(Nome, 40);
+    strupr(Nome);
+    while(strlen(Nome) < 40)
+    {
+        strcat(Nome, ".");
+
+    }
+    fstream Leitura;
+    Leitura.open("Agenda.txt");
+
+    J=0;
+    while(!Leitura.eof() && Encontrou == 0)
+    {
+        Leitura.getline(Buff, 58);
+        for(I=0; I<40; I++)
         {
+            NomeComp[I] = Buff[I];
+        }
 
-            cout << "NOVO NOME:\t";
+        if (!strcmp(NomeComp, Nome))
+        {
+            Encontrou = 1;
+
+
+        }
+        J++;
+
+    }
+    if(Encontrou)
+    {
+            cout<< "NOVO NOME:\n";
             cin.ignore();
-            cin.getline(Agenda[Ind].nome, 40);
+            cin.getline(Nome, 40);
+            strupr(Nome);
+            while(strlen(Nome) < 40)
+            {
+                strcat(Nome, ".");
 
-            cout<<"NOVO TELEFONE\n";
-            cin.getline(Agenda[Ind].telefone, 15);
-            cout <<"CONTATO EDITADO!";
-        } else
-        cout << "CÓDIGO DE INVOCADOR NÃO ENCONTRADO!\n"<<endl;
+            }
+            cout<<"NOVO TELEFONE:\n";
+            cin.getline(Telefone, 15);
+            while (strlen(Telefone)< 15)
+            {
+                strcat(Telefone, ".");
+            }
+            Leitura << Nome<<"\t"<<Telefone;
+
+    } else
+    {
+        cout<<"NOME NAO ENCONTRADO\n\n";
+
+    }
+    cout<<"precione enter para continuar\n";
+    cin.get();
+    Leitura.close();
+
+
 }
 void fLista()
 {
-    cin.ignore();
-    int I, J;
-    fLimpa();
-    cout << "========================LISTAGEM=========================\n";
-
-    for(I=0;  Agenda[I].codigo!=0; I++)
+    char Buff[58];
+    ifstream Leitura;
+    Leitura.open("Agenda.txt");
+    while(!Leitura.eof())
     {
-        cout << Agenda[I].codigo << "\t"<<Agenda[I].nome<<"\t" << Agenda[I].telefone<<"\n\n"<<endl;
-    }
 
-    cout<<"precione uma tecla para continuar";
-    cin.get();
+    }
 
 }
 void fApaga()
 {
-    cin.ignore();
-    char Nome[40];
-    cout<<"NOME DO CONTATO A SER EXCLUÍDO:\t";
-    cin.getline(Nome, 40);
-
-    int Indice = fPesquisa(Nome);
-    if(Indice != -1)
-    {
-        Agenda[Indice].codigo = 0;
-        cout << "CONTATO APAGADO COM SUCESSO!\n"<<endl;
-    } else
-    {
-        cout << "CONTATO NAO ENCONTRADO\n"<<endl;
-    }
 
 }
-
-void fSalva()
+void fSai()
 {
 
 }
@@ -135,116 +201,32 @@ void fSalva()
 
 int main()
 {
-    //variaveis
-    int I, J, Op = 0, X = 0;
-    char Buff[58];
+    int Op = 0;
+    while (Op != 7)
+    {
+        fLimpa();
+        cout << "================AGENDA==================\n"<<endl;
+        cout << "1) CADASTRAR\n2) PESQUISAR\n3) EDITAR\n4) LISTAR\n5) APAGAR\n6) SALVAR\n7) SAIR\n\n";
+        cin >> Op;
 
-    for(I=0; I < 20; I++)
-    {
-        Agenda[I].codigo = 0;
-    }
-    ifstream leitura;
-    leitura.open("Agenda.txt");
-    if(!leitura.is_open( ))
-    {
-        cout<<"Não foi possível abrir arquivo! agenda vazia\n";
-        leitura.clear( );
-    } else
-    {
-        J=0;
-        while(leitura.getline(Buff, 58))
+        if(Op == 1)
         {
-            Agenda[J].codigo = Buff[0];
-            for (I=0; I < 40; I++)
-            {
-                Agenda[J].nome[I] = Buff[I+2];
-            }
-            for(I = 0; I < 15; I++)
-            {
-                Agenda[J].telefone[I] = Buff[I+43];
-            }
-            J++;
-        }
-    }
-
-        while (Op != 7)
+            fCadastra();
+        } else
         {
-
-            cout << "================AGENDA==================\n"<<endl;
-            cout << "1) CADASTRAR\n2) PESQUISAR\n3) EDITAR\n4) LISTAR\n5) APAGAR\n6) SALVAR\n7) SAIR\n\n";
-            cin >> Op;
-            if(Op == 1)
+            if(Op == 2)
             {
-                fCadastra();
-            }
-            else
+                fPesquisa();
+            } else
             {
-                if (Op == 2)
+                if(Op==3)
                 {
-                    char Nome2[40], Op2;
-                    cout<<"DIGITE O NOME DO CONTATO A SER PESQUISADO:\t";
-                    cin.getline(Nome2, 40);
-
-                    int Integer = fPesquisa(Nome2);
-                    if(Integer!= -1)
-                    {
-                        cout<<"CONTATO ENCONTRDO!\nDESEJA IMPRIMIR SEUS DADOS?\nS/N: ";
-                        cin >> Op2;
-                        if (Op2 == 'S')
-                            cout<<"\n"<<Agenda[Integer].codigo<<"\t"<<Agenda[Integer].nome<<"\t"<<Agenda[Integer].telefone<<endl;
-                    }
-                }
-
-                else
-                {
-                    if (Op==3)
-                    {
-                        fEdita();
-                    }
-
-                    else
-                    {
-                        if (Op==4)
-                        {
-                            fLista();
-                        }
-
-                        else
-                        {
-                            if(Op==5)
-                            {
-                                fApaga();
-                            }
-
-                            else
-                            {
-                                if (Op==6)
-                                {
-                                    fSalva();
-                                }
-
-
-                                else
-                                {
-                                    if (Op==7)
-                                    {
-                                        cout<<"DESEJA SALVAR ANTES DE SAIR?";
-                                        cout<<"S/N?";
-                                        char Decisao;
-                                        cin >> Decisao;
-                                        if(Decisao == 'S')
-                                            fSalva();
-                                    }
-
-                                }
-                            }
-                        }
-                    }
+                    fEdita();
                 }
             }
+
         }
-
-
+    }
 
 
     return 0;

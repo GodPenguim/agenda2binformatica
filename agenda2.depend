@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1511921967 source:c:\users\arthur\desktop\ifro 2ª ano\tÉcnicas\progamação c\agenda2\main.cpp
+	<iostream>
+	<fstream>
+	<cstring>
+
